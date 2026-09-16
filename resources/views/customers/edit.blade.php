@@ -10,7 +10,7 @@
     </div>
     <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control form-control-lg" id="email" name="email" value="{{ $customer->email }}" required>
+        <input type="email" class="form-control form-control-lg" id="email" name="email" value="{{ $customer->email }}">
     </div>
     <div class="mb-3">
         <label for="phone" class="form-label">Teléfono</label>
@@ -23,9 +23,11 @@
                 <option value="+54" {{ $customer->country_code == '+54' ? 'selected' : '' }}>🇦🇷 +54</option>
             </select>
             <input type="text" class="form-control" id="phone" name="phone" value="{{ $customer->phone }}" placeholder="Número sin código">
+            <button type="button" class="btn btn-outline-primary" id="voice-customer-button" title="Completar cliente por voz"><i class="bi bi-mic"></i><span class="visually-hidden">Usar voz</span></button>
         </div>
     </div>
     <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-check-circle"></i> Actualizar</button>
     <a href="{{ route('customers.index') }}" class="btn btn-secondary btn-lg"><i class="bi bi-arrow-left"></i> Volver</a>
 </form>
+<div id="voice-customer-status" class="form-text mt-2" aria-live="polite"></div>
 @endsection

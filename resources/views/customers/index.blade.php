@@ -27,10 +27,12 @@
                 @if($customer->phone)
                     <a href="https://wa.me/{{ $customer->country_code }}{{ $customer->phone }}?text={{ urlencode('Hola ' . $customer->name . ', gracias por registrarte en nuestra zapatería. Me gustaría preguntarte sobre nuestros servicios o para comunicarme más fácil. ¿Cómo podemos ayudarte?') }}" class="btn btn-success btn-sm" title="WhatsApp" target="_blank"><i class="bi bi-whatsapp"></i></a>
                 @endif
-                <form action="{{ route('customers.destroy', $customer) }}" method="POST" style="display:inline;">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro?')"><i class="bi bi-trash"></i></button>
-                </form>
+                @if(auth()->user()->isAdmin())
+                    <form action="{{ route('customers.destroy', $customer) }}" method="POST" style="display:inline;" data-confirm="¿Deseas desactivar este cliente?">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                    </form>
+                @endif
             </td>
         </tr>
         @endforeach

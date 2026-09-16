@@ -9,6 +9,9 @@ Este proyecto es un sistema de gestión de inventario para una zapatería desarr
 - **Gestión de clientes**: Mantener información de clientes.
 - **Servicios**: Mostrar precios de servicios como cosida y pegada.
 - **Interfaz intuitiva**: Botones grandes, iconos, texto claro, en español.
+- **Dashboard**: Resumen de inventario, clientes, reparaciones y movimientos recientes.
+- **Reparaciones**: Registro, búsqueda por cliente/teléfono, estados y asistente guiado.
+- **Roles**: Administradores gestionan configuración; usuarios consultan inventario y atienden reparaciones.
 
 ## Requisitos del Sistema
 
@@ -78,3 +81,18 @@ Este proyecto es un sistema de gestión de inventario para una zapatería desarr
 - Si hay errores de permisos, ejecuta como administrador.
 - Verifica que las extensiones de PHP estén habilitadas.
 - Asegúrate de que el archivo .env esté configurado correctamente.
+
+## Mapeo y verificación
+
+El análisis de la arquitectura, la conexión de base de datos y los cambios aplicados está en [docs/mapeo-proyecto.md](docs/mapeo-proyecto.md).
+
+Comandos útiles desde la raíz:
+
+```bash
+php artisan migrate
+php artisan view:cache
+php artisan test
+php artisan serve
+```
+
+La aplicación usa autenticación de sesión de Laravel porque su interfaz es Blade tradicional; JWT no aporta una ventaja para este flujo web.

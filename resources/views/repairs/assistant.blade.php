@@ -1,0 +1,9 @@
+@extends('layouts.app')
+@section('content')
+<div class="row justify-content-center"><div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3"><div><a href="{{ route('repairs.index') }}" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Volver a reparaciones</a><h1 class="mt-2 mb-1"><i class="bi bi-chat-dots"></i> Asistente de reparaciones</h1><p class="text-muted mb-0">Registro guiado para atender al cliente paso a paso.</p></div></div>
+    <div class="card border-0 shadow-sm"><div class="card-header bg-white"><span class="badge text-bg-primary">Paso actual: {{ str_replace('_', ' ', $state['step']) }}</span></div><div class="card-body bg-light" style="min-height: 360px; max-height: 55vh; overflow-y: auto;">
+        @foreach($messages as $message)<div class="d-flex {{ $message['from'] === 'user' ? 'justify-content-end' : 'justify-content-start' }} mb-3"><div class="p-3 rounded-3 {{ $message['from'] === 'user' ? 'bg-primary text-white' : 'bg-white border' }}" style="max-width: 85%; white-space: pre-line;">{{ $message['text'] }}</div></div>@endforeach
+    </div><div class="card-footer bg-white"><form method="POST" action="{{ route('repairs.assistant.message') }}" class="d-flex gap-2">@csrf<input name="message" class="form-control form-control-lg" placeholder="Escribe tu respuesta..." required autofocus><button class="btn btn-primary btn-lg" title="Enviar"><i class="bi bi-send"></i><span class="visually-hidden">Enviar</span></button></form><form method="POST" action="{{ route('repairs.assistant.message') }}" class="mt-2">@csrf<input type="hidden" name="message" value="cancelar"><button class="btn btn-link btn-sm text-danger p-0">Cancelar conversación</button></form></div></div>
+</div></div>
+@endsection

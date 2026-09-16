@@ -34,11 +34,13 @@
             <td>{{ $product->stock }}</td>
             <td>
                 <a href="{{ route('inventory.show', $product) }}" class="btn btn-info btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
-                <a href="{{ route('inventory.edit', $product) }}" class="btn btn-warning btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
-                <form action="{{ route('inventory.destroy', $product) }}" method="POST" style="display:inline;">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro?')"><i class="bi bi-trash"></i></button>
-                </form>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('inventory.edit', $product) }}" class="btn btn-warning btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                    <form action="{{ route('inventory.destroy', $product) }}" method="POST" style="display:inline;" data-confirm="¿Deseas desactivar este producto?">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                    </form>
+                @endif
             </td>
         </tr>
         @endforeach

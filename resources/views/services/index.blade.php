@@ -23,9 +23,9 @@
                 <div class="mt-3">
                     <a href="{{ route('services.show', $service) }}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Ver</a>
                     <a href="{{ route('services.edit', $service) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Editar</a>
-                    <form action="{{ route('services.destroy', $service) }}" method="POST" style="display:inline;">
+                    <form action="{{ route('services.destroy', $service) }}" method="POST" style="display:inline;" data-confirm="¿Deseas desactivar este servicio?">
                         @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro?')"><i class="bi bi-trash"></i></button>
+                        <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                     </form>
                 </div>
             </div>

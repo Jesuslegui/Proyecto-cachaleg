@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>Editar Inventario</h1>
-<form action="{{ route('inventory.update', $product) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('inventory.update', ['product' => $product->id]) }}" method="POST" enctype="multipart/form-data">
     @csrf @method('PUT')
     <div class="mb-3">
         <label for="name" class="form-label">Nombre</label>

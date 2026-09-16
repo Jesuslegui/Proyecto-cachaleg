@@ -36,9 +36,9 @@
                 @if($provider->phone)
                     <a href="https://wa.me/{{ $provider->country_code }}{{ $provider->phone }}?text={{ urlencode('Hola ' . $provider->name . ', soy de la zapatería. Me gustaría preguntarte sobre tus productos o para coordinar pedidos. ¿Podemos hablar?') }}" class="btn btn-success btn-sm" title="WhatsApp" target="_blank"><i class="bi bi-whatsapp"></i></a>
                 @endif
-                <form action="{{ route('providers.destroy', $provider) }}" method="POST" style="display:inline;">
+                <form action="{{ route('providers.destroy', $provider) }}" method="POST" style="display:inline;" data-confirm="¿Deseas desactivar este proveedor?">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro?')"><i class="bi bi-trash"></i></button>
+                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
                 </form>
             </td>
         </tr>

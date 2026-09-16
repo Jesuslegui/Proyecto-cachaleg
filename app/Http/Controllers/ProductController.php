@@ -3,13 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\InventoryMovement;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $search = trim((string) $request->input('search'));
+        $availability = $request->input('availability');
+        $products = Product::query()
+            ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%")
+                    ->orWhere('id', is_numeric($search) ? $search : 0);
+            }))
+            ->when($availability === 'available', fn ($query) => $query->where('stock', '>', 0))
+            ->when($availability === 'low', fn ($query) => $query->whereBetween('stock', [1, 5]))
+            ->when($availability === 'out', fn ($query) => $query->where('stock', '<=', 0))
+            ->latest()
+            ->get();
+
         return view('products.index', compact('products'));
     }
 
@@ -23,8 +40,8 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'size' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
             'colors' => 'nullable|string',
             'shape' => 'nullable|string',
@@ -37,13 +54,20 @@ class ProductController extends Controller
             $data['image'] = $path;
         }
 
-        Product::create($data);
+        DB::transaction(function () use ($data) {
+            $product = Product::create($data);
+            if ($product->stock > 0) {
+                InventoryMovement::create(['product_id' => $product->id, 'quantity' => $product->stock, 'type' => 'in', 'reason' => 'Inventario inicial', 'user_id' => Auth::id()]);
+            }
+        });
         return redirect()->route('inventory.index')->with('success', 'Producto creado.');
     }
 
     public function show(Product $product)
     {
-        return view('products.show', compact('product'));
+        $customers = Customer::query()->orderBy('name')->get();
+
+        return view('products.show', compact('product', 'customers'));
     }
 
     public function edit(Product $product)
@@ -56,8 +80,8 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'size' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
             'colors' => 'nullable|string',
             'shape' => 'nullable|string',
@@ -70,7 +94,14 @@ class ProductController extends Controller
             $data['image'] = $path;
         }
 
-        $product->update($data);
+        DB::transaction(function () use ($data, $product) {
+            $oldStock = $product->stock;
+            $product->update($data);
+            $difference = $product->stock - $oldStock;
+            if ($difference !== 0) {
+                InventoryMovement::create(['product_id' => $product->id, 'quantity' => abs($difference), 'type' => $difference > 0 ? 'in' : 'out', 'reason' => 'Ajuste desde edición de producto', 'user_id' => Auth::id()]);
+            }
+        });
         return redirect()->route('inventory.index')->with('success', 'Producto actualizado.');
     }
 
