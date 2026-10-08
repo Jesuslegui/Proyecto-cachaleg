@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class RepairController extends Controller
@@ -47,6 +48,7 @@ class RepairController extends Controller
             'customer_name' => 'required_without:customer_id|string',
             'customer_phone' => 'nullable|string',
             'product_description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'service_id' => 'nullable|exists:services,id',
             'description' => 'nullable|string',
             'received_at' => 'nullable|date',
@@ -56,8 +58,12 @@ class RepairController extends Controller
             'observations' => 'nullable|string',
         ]);
 
+        unset($data['image']);
         $data['created_by'] = Auth::id();
         $data['status'] = $data['status'] ?? 'Recibido';
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('repairs', 'public');
+        }
 
         $repair = Repair::create($data);
 
@@ -83,6 +89,7 @@ class RepairController extends Controller
             'customer_name' => 'required_without:customer_id|string',
             'customer_phone' => 'nullable|string',
             'product_description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'service_id' => 'nullable|exists:services,id',
             'description' => 'nullable|string',
             'received_at' => 'nullable|date',
@@ -92,7 +99,17 @@ class RepairController extends Controller
             'observations' => 'nullable|string',
         ]);
 
-        $repair->update($data);
+        unset($data['image']);
+        if ($request->hasFile('image')) {
+            $previousImage = $repair->image;
+            $data['image'] = $request->file('image')->store('repairs', 'public');
+            $repair->update($data);
+            if ($previousImage) {
+                Storage::disk('public')->delete($previousImage);
+            }
+        } else {
+            $repair->update($data);
+        }
         return redirect()->route('repairs.index')->with('success', 'Reparación actualizada.');
     }
 
