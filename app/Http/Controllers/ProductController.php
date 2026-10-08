@@ -15,6 +15,7 @@ class ProductController extends Controller
     {
         $search = trim((string) $request->input('search'));
         $availability = $request->input('availability');
+        $category = $request->input('category');
         $products = Product::query()
             ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
@@ -24,8 +25,10 @@ class ProductController extends Controller
             ->when($availability === 'available', fn ($query) => $query->where('stock', '>', 0))
             ->when($availability === 'low', fn ($query) => $query->whereBetween('stock', [1, 5]))
             ->when($availability === 'out', fn ($query) => $query->where('stock', '<=', 0))
+            ->when(in_array($category, ['cueros', 'zuelas', 'hormas'], true), fn ($query) => $query->where('category', $category))
             ->latest()
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         return view('products.index', compact('products'));
     }
