@@ -45,13 +45,16 @@ Este proyecto es un sistema de gestión de inventario para una zapatería desarr
 6. **Ejecutar migraciones**:
    - `php artisan migrate`
 
-7. **Ejecutar seeders para datos iniciales**:
-   - `php artisan db:seed` (agrega servicios de cosida y pegada)
+7. **Publicar el almacenamiento de imágenes**:
+   - `php artisan storage:link`
 
-8. **Crear usuario administrador** (opcional):
+8. **Ejecutar seeders para datos iniciales**:
+   - `php artisan db:seed` (agrega cosida, pegada y capellada con sus imágenes)
+
+9. **Crear usuario administrador** (opcional):
    - Regístrate desde la aplicación o usa `php artisan tinker` para crear un usuario.
 
-9. **Iniciar el servidor**:
+10. **Iniciar el servidor**:
    - `php artisan serve`
    - Accede a http://localhost:8000
 

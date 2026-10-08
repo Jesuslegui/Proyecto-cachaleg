@@ -17,6 +17,13 @@ Route::get('/', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    // Registrar primero las rutas estáticas para evitar que "create" se tome como ID de producto.
+    Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
+        Route::resource('inventory', ProductController::class)
+            ->except(['index', 'show'])
+            ->parameters(['inventory' => 'product']);
+    });
+
     // Inventario y clientes accesibles para usuarios autenticados
     Route::resource('inventory', ProductController::class)
         ->only(['index', 'show'])
@@ -27,14 +34,16 @@ Route::middleware(['auth'])->group(function () {
 
     // Servicios y proveedores: sólo administradores
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
-        Route::resource('inventory', ProductController::class)
-            ->except(['index', 'show'])
-            ->parameters(['inventory' => 'product']);
         Route::post('inventory/{product}/movements', [InventoryMovementController::class, 'store'])->name('inventory.movements.store');
         Route::resource('services', ServiceController::class);
         Route::resource('providers', ProviderController::class);
         Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('users', [UserController::class, 'store'])->name('users.store');
+        Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
+        Route::patch('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
