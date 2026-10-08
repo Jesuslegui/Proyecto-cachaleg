@@ -41,14 +41,14 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'size' => 'required',
+            'name' => 'required|string|max:255',
+            'size' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-            'colors' => 'nullable|string',
-            'shape' => 'nullable|string',
-            'category' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'colors' => 'nullable|string|max:255',
+            'shape' => 'nullable|string|max:255',
+            'category' => 'nullable|in:cueros,zuelas,hormas',
         ]);
 
         $data = $request->only(['name','size','price','stock','colors','shape','category']);
@@ -81,14 +81,14 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required',
-            'size' => 'required',
+            'name' => 'required|string|max:255',
+            'size' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-            'colors' => 'nullable|string',
-            'shape' => 'nullable|string',
-            'category' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'colors' => 'nullable|string|max:255',
+            'shape' => 'nullable|string|max:255',
+            'category' => 'nullable|in:cueros,zuelas,hormas',
         ]);
 
         $data = $request->only(['name','size','price','stock','colors','shape','category']);
