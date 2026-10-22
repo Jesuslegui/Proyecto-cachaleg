@@ -8,6 +8,9 @@
                 <h3><i class="bi bi-person-circle"></i> Iniciar Sesión</h3>
             </div>
             <div class="card-body">
+                @if (session('status'))
+                    <div class="alert alert-success" role="status">{{ session('status') }}</div>
+                @endif
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="mb-3">

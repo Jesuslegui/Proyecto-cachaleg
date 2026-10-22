@@ -19,9 +19,23 @@ abstract class FeatureTestCase extends TestCase
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default('user');
+            $table->boolean('two_factor_enabled')->default(false);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::create('two_factor_login_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('token_hash', 64)->unique();
+            $table->string('code_hash')->nullable();
+            $table->unsignedTinyInteger('attempts')->default(0);
+            $table->timestamp('expires_at');
+            $table->timestamp('used_at')->nullable();
+            $table->timestamps();
+            $table->index(['user_id', 'expires_at']);
+            $table->unique('user_id');
         });
 
         Schema::create('products', function (Blueprint $table) {
