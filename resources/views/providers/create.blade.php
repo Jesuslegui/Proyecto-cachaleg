@@ -1,52 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Agregar Proveedor</h1>
+<div class="mb-4"><h1 class="h2 mb-1"><i class="bi bi-truck text-primary"></i> Agregar proveedor</h1><p class="text-muted mb-0">Datos de contacto y ubicación</p></div>
+<div class="card border-0 shadow-sm"><div class="card-body p-4">
 <form action="{{ route('providers.store') }}" method="POST">
     @csrf
-    <div class="mb-3">
-        <label for="name" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="name" name="name" required>
-    </div>
-    <div class="mb-3">
-        <label for="phone" class="form-label">Teléfono</label>
-        <div class="input-group">
-            <select class="form-select" id="country_code" name="country_code" style="max-width: 120px;">
-                <option value="+57" selected>🇨🇴 +57</option>
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+34">🇪🇸 +34</option>
-                <option value="+52">🇲🇽 +52</option>
-                <option value="+54">🇦🇷 +54</option>
+    <div class="row g-3">
+        <div class="col-md-6"><label for="name" class="form-label">Nombre</label><input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>@error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+        <div class="col-md-6"><label for="email" class="form-label">Correo electrónico</label><input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+        <div class="col-md-6"><label for="phone" class="form-label">Teléfono</label><div class="input-group">
+            <select class="form-select flex-grow-0 @error('country_code') is-invalid @enderror" id="country_code" name="country_code" style="max-width: 130px;">
+                @foreach(['+57' => '🇨🇴 +57', '+1' => '🇺🇸 +1', '+34' => '🇪🇸 +34', '+52' => '🇲🇽 +52', '+54' => '🇦🇷 +54'] as $code => $label)<option value="{{ $code }}" @selected(old('country_code', '+57') === $code)>{{ $label }}</option>@endforeach
             </select>
-            <input type="text" class="form-control" id="phone" name="phone" placeholder="Número sin código">
+            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Número sin código">
+        </div>@error('phone')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror</div>
+        <div class="col-md-6"><label for="maps_url" class="form-label">URL de Google Maps <span class="text-muted">(opcional)</span></label><input type="url" class="form-control" id="maps_url" placeholder="https://www.google.com/maps/place/...">
+            <div class="form-text">Pega una URL de Google Maps para completar la ubicación.</div><button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="urlToAddressBtn">Usar dirección desde Maps</button>
+        </div>
+        <div class="col-12"><label for="address" class="form-label">Dirección o lugar</label><textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3">{{ old('address') }}</textarea>@error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="previewAddressBtn">Previsualizar en Google Maps</button>
+            <div class="mt-3" id="mapPreview" style="display:none;"><div class="ratio ratio-16x9"><iframe id="mapFrame" src="" style="border:0;" allowfullscreen="" loading="lazy" title="Vista previa de Google Maps"></iframe></div></div>
         </div>
     </div>
-    <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="email">
-    </div>
-    <div class="mb-3">
-        <label for="maps_url" class="form-label">URL de Google Maps (opcional)</label>
-        <input type="url" class="form-control" id="maps_url" placeholder="https://www.google.com/maps/place/...">
-        <div class="mt-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm" id="urlToAddressBtn">Usar dirección desde Maps</button>
-        </div>
-        <small class="text-muted">Ej: abre Google Maps, marca punto rojo y copia la URL aquí.</small>
-    </div>
-    <div class="mb-3">
-        <label for="address" class="form-label">Dirección / Lugar (ej. Estación, Av. 41 #6-76)</label>
-        <textarea class="form-control" id="address" name="address" rows="3"></textarea>
-        <div class="mt-2">
-            <button type="button" class="btn btn-outline-primary btn-sm" id="previewAddressBtn">Previsualizar en Google Maps</button>
-        </div>
-        <div class="mt-2" id="mapPreview" style="display:none;">
-            <div class="ratio ratio-16x9">
-                <iframe id="mapFrame" src="" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Guardar</button>
+    <div class="d-flex gap-2 mt-4"><button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-1"></i> Guardar proveedor</button><a href="{{ route('providers.index') }}" class="btn btn-outline-secondary">Cancelar</a></div>
 </form>
+</div></div>
 
 <script>
     const previewBtn = document.getElementById('previewAddressBtn');

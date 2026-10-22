@@ -11,7 +11,7 @@ class Repair extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'customer_id', 'customer_name', 'customer_phone', 'product_description', 'service_id',
+        'customer_id', 'customer_name', 'customer_phone', 'product_description', 'image', 'service_id',
         'description', 'received_at', 'estimated_delivery_at', 'status', 'price', 'observations', 'created_by'
     ];
 

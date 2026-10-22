@@ -47,6 +47,9 @@
                 <ul class="navbar-nav">
                     @auth
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('account.security') }}"><i class="bi bi-shield-lock"></i> Seguridad</a>
+                        </li>
+                        <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right"></i> Salir</button>
